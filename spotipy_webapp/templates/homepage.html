@@ -11,7 +11,7 @@
     {% for foo in foob %}
     <tr>
         <td>
-            <a href="{{ url_for('main.get_song', id=foo.id) }}"> {{foo.name}} </a>
+            <a href="{{ url_for('get_song', id=foo.id) }}"> {{foo.name}} </a>
         </td>
         <td> <img src={{foo.cover}} style="height: min-content;"> </td>
     </tr>

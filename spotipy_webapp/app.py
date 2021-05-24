@@ -10,7 +10,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import base64
 from spotipy.oauth2 import SpotifyClientCredentials
-from flask import Blueprint, render_template, current_app, request
+from flask import Blueprint, render_template, current_app, request, Flask
+
+app= Flask(__name__)
 
 #define the client_id and client_secret
 
@@ -20,11 +22,8 @@ client_secret = os.environ.get('client_secret')
 client_credentials_manager = SpotifyClientCredentials(client_id,client_secret)
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-#Define the main
-main = Blueprint('main',__name__)
-
 #Define the processes that occur on the landing page
-@main.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 
 def homepage():
 
@@ -55,7 +54,7 @@ def homepage():
     
     return render_template('homepage.html', foob=songs)
 
-@main.route('/song/<id>', methods=['GET'])
+@app.route('/song/<id>', methods=['GET'])
 
 def get_song(id):
 
@@ -104,9 +103,4 @@ def get_song(id):
     return render_template('song.html', song=song, plot_url=plot_url)
 
 if __name__ == '__main__':
-    main.run()
-
-
-
-
-
+    app.run()

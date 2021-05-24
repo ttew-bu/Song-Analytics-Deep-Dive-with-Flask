@@ -1,2 +1,2 @@
+FLASK_APP=spotipy_webapp/app.py
 FLASK_ENV=development
-FLASK_APP=spotipy_webapp
