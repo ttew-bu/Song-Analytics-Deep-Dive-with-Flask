@@ -1,1 +1,1 @@
-web: gunicorn spotipy_webapp:routes
+web: gunicorn spotipy_webapp:__init__
