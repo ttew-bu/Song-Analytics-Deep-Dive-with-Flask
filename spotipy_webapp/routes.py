@@ -6,7 +6,6 @@ from io import BytesIO, StringIO
 import matplotlib
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 import base64
 import pandas as pd

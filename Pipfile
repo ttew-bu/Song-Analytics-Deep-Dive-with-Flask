@@ -10,6 +10,8 @@ requests = "*"
 spotipy = "*"
 gunicorn = "*"
 heroku = "*"
+matplotlib = "*"
+numpy = "*"
 
 [dev-packages]
 
