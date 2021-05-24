@@ -9,6 +9,7 @@ python-dotenv = "*"
 requests = "*"
 spotipy = "*"
 gunicorn = "*"
+heroku = "*"
 
 [dev-packages]
 
