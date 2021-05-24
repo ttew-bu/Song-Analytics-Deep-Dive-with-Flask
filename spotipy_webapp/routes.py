@@ -1,8 +1,11 @@
+import matplotlib
+matplotlib.use('Agg')
 from os import error
 from flask.wrappers import Response
 import requests
 import spotipy
-from io import BytesIO, StringIO 
+from io import BytesIO, StringIO
+import matplotlib
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib.pyplot as plt
 import seaborn as sns
