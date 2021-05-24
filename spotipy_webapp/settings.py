@@ -1,3 +1,4 @@
 import os
 
-SPOTIFY_API_KEY = os.environ.get('SPOTIFY_API_KEY')
+client_id = os.environ.get('client_id')
+client_secret = os.environ.get('client_secret')
