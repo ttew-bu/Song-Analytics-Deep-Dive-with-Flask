@@ -8,9 +8,7 @@ from io import BytesIO, StringIO
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
 import base64
-import pandas as pd
 from spotipy.oauth2 import SpotifyClientCredentials
 from flask import Blueprint, render_template, current_app, request
 from .config import client_secret, client_id

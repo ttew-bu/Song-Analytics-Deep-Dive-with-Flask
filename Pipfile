@@ -5,12 +5,11 @@ name = "pypi"
 
 [packages]
 flask = "*"
-python-dotenv = "*"
+heroku3 = "*"
 requests = "*"
 spotipy = "*"
-gunicorn = "*"
-heroku = "*"
 matplotlib = "*"
+gunicorn = "*"
 
 [dev-packages]
 
