@@ -1,0 +1,23 @@
+{% extends  'base.html' %}
+{% block content %}
+    <h1>{{song['name']}}</h1>
+
+    <p>
+        <table>
+            <tr>
+                <td><img src="{{song.album.images[0]['url']}}" style="width:400;height:400;"></td>
+                <td><img src="data:image/png;base64, {{ plot_url }}"style="width:400;height:400;"></td>
+            </tr>
+    </table>
+        <table>
+            <th>Artists</th>
+            {% for s in song.artists %}
+            <tr>
+                <td>{{s.name}}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </p>
+
+{% endblock %}

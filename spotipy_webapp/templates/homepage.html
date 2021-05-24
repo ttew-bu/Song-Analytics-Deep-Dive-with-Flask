@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+    <center>
+    <h1>Search For a Song</h1>
+        <p>
+           <form method="POST">
+               <input type="text" name="query" class="form-control">
+            <button type="submit" class= "btn btn-primary">Search Spotify</button>
+           </form>
+    <table>
+    {% for foo in foob %}
+    <tr>
+        <td>
+            <a href="{{ url_for('main.get_song', id=foo.id) }}"> {{foo.name}} </a>
+        </td>
+        <td> <img src={{foo.cover}} style="height: min-content;"> </td>
+    </tr>
+    {% endfor %}
+    </table>
+    </center>
+</p>
+
+{% endblock %}
