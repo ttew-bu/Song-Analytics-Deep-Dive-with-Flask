@@ -1,1 +1,1 @@
-web: gunicorn app:main
+web: gunicorn routes:spotipy_webapp
