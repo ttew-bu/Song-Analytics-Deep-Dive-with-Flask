@@ -100,9 +100,11 @@ def get_song(id):
 
     #Convert PNG to Byte String (Base64)
     plot_url = base64.b64encode(img.getbuffer()).decode('utf8')
-    
 
     return render_template('song.html', song=song, plot_url=plot_url)
+
+if __name__ == '__main__':
+    main.run()
 
 
 

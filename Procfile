@@ -1,1 +1,1 @@
-web: gunicorn spotipy_webapp:__init__
+web: gunicorn spotipy_webapp:spotipy_webapp
