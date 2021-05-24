@@ -1,6 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
-from os import error
+import os
 from flask.wrappers import Response
 import requests
 import spotipy
@@ -11,9 +11,11 @@ import seaborn as sns
 import base64
 from spotipy.oauth2 import SpotifyClientCredentials
 from flask import Blueprint, render_template, current_app, request
-from .config import client_secret, client_id
 
 #define the client_id and client_secret
+
+client_id = os.environ.get('client_id')
+client_secret = os.environ.get('client_secret')
 
 client_credentials_manager = SpotifyClientCredentials(client_id,client_secret)
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)

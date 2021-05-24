@@ -14,8 +14,6 @@ def create_app(config_file='settings.py'):
     #Register the main blueprint for page routing 
     app.register_blueprint(main)
 
-    app.config.from_pyfile('config.py')
-
     #return our application
     return app
 
