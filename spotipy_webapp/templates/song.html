@@ -1,16 +1,18 @@
 {% extends  'base.html' %}
 {% block content %}
-    <h1>{{song['name']}}</h1>
-
+    <center><h1>{{song['name']}}</h1></center>
+    {{lyrics}}
     <p>
         <table>
             <tr>
                 <td><img src="{{song.album.images[0]['url']}}" style="width:400;height:400;"></td>
+            </tr>
+            <tr>
                 <td><img src="data:image/png;base64, {{ plot_url }}"style="width:400;height:400;"></td>
             </tr>
     </table>
         <table>
-            <th>Artists</th>
+            <h2>Artists</h2>
             {% for s in song.artists %}
             <tr>
                 <td>{{s.name}}</td>
@@ -18,6 +20,23 @@
             </tr>
             {% endfor %}
         </table>
-    </p>
 
+        <h2>Genres</h2>
+        <table>
+            {% if genres %}
+            {% for genre in genres %}
+            <tr>
+                <td>{{genre}}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+
+            {% else %}
+            Spotify has no genre information for this song. <br>
+            As a result, the predictor function is not available for this track.<br>
+            Please try another track or come back later!
+            {% endif %}
+            
+        </table>
+    </p>
 {% endblock %}

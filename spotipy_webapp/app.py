@@ -1,9 +1,11 @@
 import matplotlib
 matplotlib.use('Agg')
 import os
+import re
 from flask.wrappers import Response
 import requests
 import spotipy
+import lyricsgenius
 from io import BytesIO, StringIO
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib.pyplot as plt
@@ -19,8 +21,12 @@ app= Flask(__name__)
 client_id = os.environ.get('client_id')
 client_secret = os.environ.get('client_secret')
 
+genius_token= os.environ.get('genius_token')
+
 client_credentials_manager = SpotifyClientCredentials(client_id,client_secret)
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+genius = lyricsgenius.Genius(access_token=genius_token)
 
 #Define the processes that occur on the landing page
 @app.route('/', methods=['GET', 'POST'])
@@ -32,11 +38,6 @@ def homepage():
 
     if request.method == "POST":
         results=sp.search(request.form.get('query'), type='track', limit=25)
-        
-        #Test to see that the list of tracks routes correctly 
-        # print(results['tracks']['items'])
-        # print(len(results['tracks']['items']))
-
 
         #Iterate through song ids and add them to the ids list
         for instance in range(len(results['tracks']['items'])):
@@ -51,16 +52,36 @@ def homepage():
             #Add each song to the dictionary
             songs.append(song_data)
     
-    
     return render_template('homepage.html', foob=songs)
 
 @app.route('/song/<id>', methods=['GET'])
 
 def get_song(id):
 
+    #Define spotif yvariables 
     song = sp.track(id)
     analysis = sp.audio_features(id)
 
+    #Create a list to iterate through artists
+    artist_ids = []
+    
+    for artist in song['artists']:
+        artist_ids.append(artist['id'])
+
+    #Get the lyrics from Genius
+    lyrics = genius.search_song(title=song['name'],artist=song['artists'][0]['name']).to_dict()
+    re.sub('/n','<br>',lyrics['lyrics'])
+
+    genres_raw = []
+
+    for artist_id in artist_ids:
+        art = sp.artist(artist_id)
+        genres_raw += art['genres']
+
+    #Create a list without duplicates for the genre information to display
+    genres_complete=list(set(genres_raw))
+
+    #create an empty dictionary of song 
     song_dict = dict()
 
     analysis_components = sorted(analysis[0].items())
@@ -100,7 +121,8 @@ def get_song(id):
     #Convert PNG to Byte String (Base64)
     plot_url = base64.b64encode(img.getbuffer()).decode('utf8')
 
-    return render_template('song.html', song=song, plot_url=plot_url)
+
+    return render_template('song.html', lyrics=lyrics,song=song, genres=genres_complete, plot_url=plot_url)
 
 if __name__ == '__main__':
     app.run()
