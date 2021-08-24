@@ -11,6 +11,7 @@ spotipy = "*"
 matplotlib = "*"
 gunicorn = "*"
 seaborn = "*"
+lyricsgenius = "*"
 
 [dev-packages]
 
