@@ -12,6 +12,7 @@ matplotlib = "*"
 gunicorn = "*"
 seaborn = "*"
 lyricsgenius = "*"
+pip = "*"
 
 [dev-packages]
 
