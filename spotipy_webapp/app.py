@@ -20,7 +20,6 @@ app= Flask(__name__)
 
 client_id = os.environ.get('client_id')
 client_secret = os.environ.get('client_secret')
-
 genius_token= os.environ.get('genius_token')
 
 client_credentials_manager = SpotifyClientCredentials(client_id,client_secret)
