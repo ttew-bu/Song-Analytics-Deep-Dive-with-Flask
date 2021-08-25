@@ -16,6 +16,7 @@ pip = "*"
 plotly = "*"
 jinja2 = "*"
 sklearn = "*"
+azapi = "*"
 
 [dev-packages]
 
