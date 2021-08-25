@@ -15,6 +15,7 @@ lyricsgenius = "*"
 pip = "*"
 plotly = "*"
 jinja2 = "*"
+sklearn = "*"
 
 [dev-packages]
 

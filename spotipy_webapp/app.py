@@ -1,6 +1,5 @@
 import os
 import spotipy
-import lyricsgenius
 from spotipy.oauth2 import SpotifyClientCredentials
 from flask import Blueprint, render_template, current_app, request, Flask
 
@@ -18,11 +17,8 @@ app= Flask(__name__)
 
 client_id = os.environ.get('client_id')
 client_secret = os.environ.get('client_secret')
-genius_token= os.environ.get('genius_token')
 
 client_credentials_manager = SpotifyClientCredentials(client_id,client_secret)
-
-genius = lyricsgenius.Genius(access_token=genius_token)
 
 #Define the processes that occur on the landing page
 @app.route('/', methods=['GET', 'POST'])
