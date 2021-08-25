@@ -1,14 +1,15 @@
-{% extends  'base.html' %}
+{% extends 'base.html' %}
 {% block content %}
+
+
     <center><h1>{{song['name']}}</h1></center>
-    {{lyrics}}
-    <p>
+
+    <table>
+        <tr> 
+            <td>
         <table>
             <tr>
                 <td><img src="{{song.album.images[0]['url']}}" style="width:400;height:400;"></td>
-            </tr>
-            <tr>
-                <td><img src="data:image/png;base64, {{ plot_url }}"style="width:400;height:400;"></td>
             </tr>
     </table>
         <table>
@@ -38,5 +39,17 @@
             {% endif %}
             
         </table>
-    </p>
+        </td>
+        <td>
+            <div id="chart" style="width:1500;height:800;">
+        </td>
+        </tr>
+        </table>
+    <script src="https://cdn.plot.ly/plotly-2.2.0.min.js"></script>
+    <script type="text/javascript">
+    var data = {{graph | safe}};
+    Plotly.newPlot('chart', data,{});
+    </script>
+    </body>
+
 {% endblock %}

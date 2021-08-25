@@ -1,18 +1,16 @@
-import matplotlib
-matplotlib.use('Agg')
 import os
-import re
-from flask.wrappers import Response
-import requests
 import spotipy
 import lyricsgenius
-from io import BytesIO, StringIO
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-import matplotlib.pyplot as plt
-import seaborn as sns
-import base64
 from spotipy.oauth2 import SpotifyClientCredentials
 from flask import Blueprint, render_template, current_app, request, Flask
+
+from sklearn import preprocessing
+
+import plotly
+import plotly.express as px
+
+import pandas as pd
+import json
 
 app= Flask(__name__)
 
@@ -23,7 +21,6 @@ client_secret = os.environ.get('client_secret')
 genius_token= os.environ.get('genius_token')
 
 client_credentials_manager = SpotifyClientCredentials(client_id,client_secret)
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 genius = lyricsgenius.Genius(access_token=genius_token)
 
@@ -34,6 +31,8 @@ def homepage():
 
     #Create a blank list to store song names
     songs = []
+
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
     if request.method == "POST":
         results=sp.search(request.form.get('query'), type='track', limit=25)
@@ -57,19 +56,42 @@ def homepage():
 
 def get_song(id):
 
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
     #Define spotif yvariables 
     song = sp.track(id)
     analysis = sp.audio_features(id)
+    features = []
+
+    df= pd.DataFrame()
+
+    df['energy'] = ''*df.shape[0]
+    df['loudness'] = ''*df.shape[0]
+    df['speechiness'] = ''*df.shape[0]
+    df['valence'] = ''*df.shape[0]
+    df['liveness'] = ''*df.shape[0]
+    df['tempo'] = ''*df.shape[0]
+    df['danceability'] = ''*df.shape[0]
+    df['acousticness'] = ''*df.shape[0]
+    df['acousticness'] = ''*df.shape[0]
+
+    for i in range (0,df.shape[0]):    
+        df.loc[i,'energy'] = features[0]['energy']
+        df.loc[i,'speechiness'] = features[0]['speechiness']
+        df.loc[i,'liveness'] = features[0]['liveness']
+        df.loc[i,'loudness'] = features[0]['loudness']
+        df.loc[i,'danceability'] = features[0]['danceability']
+        df.loc[i,'tempo'] = features[0]['tempo']
+        df.loc[i,'valence'] = features[0]['valence']
+        df.loc[i,'acousticness'] = features[0]['acousticness']
+        df.loc[i,'instrumentalness'] = features[0]['instrumentalness']
+
 
     #Create a list to iterate through artists
     artist_ids = []
     
     for artist in song['artists']:
         artist_ids.append(artist['id'])
-
-    #Get the lyrics from Genius
-    lyrics = genius.search_song(title=song['name'],artist=song['artists'][0]['name']).to_dict()
-    re.sub('/n','<br>',lyrics['lyrics'])
 
     genres_raw = []
 
@@ -80,48 +102,29 @@ def get_song(id):
     #Create a list without duplicates for the genre information to display
     genres_complete=list(set(genres_raw))
 
-    #create an empty dictionary of song 
-    song_dict = dict()
 
-    analysis_components = sorted(analysis[0].items())
+    #Create a df and plot for the page
+    df2 = pd.read_csv('spotipy_webapp/data/genres_41k.csv')
 
-    for key,value in analysis_components:
-        song_dict.setdefault(key, []).append(value)
+    df2 = df2.drop(columns=["track","artist","uri","target","genres",'mode','key','time_signature','chorus_hit','duration_ms','sections'])
 
+    df2.append(df)
 
-    #Define a list of useless variables we can drop 
+    scaler = preprocessing.MinMaxScaler()
 
-    drop_list = ['analysis_url', 'track_href','type','uri','id','duration_ms']
-    for var in drop_list:
-        del song_dict[var]
-    
+    scaled_data = scaler.fit_transform(df2)
 
-    keys =list(song_dict.keys())
-    val_list = list(song_dict.values())
-    values = [x[0] for x in val_list]
+    scaled_df = pd.DataFrame(scaled_data, columns=df2.columns)
 
-    print(keys)
-    print(values)
+    fig = px.box(scaled_df,y=scaled_df.columns, points=False)
 
-    #Create the plot 
-    fig = plt.figure()
-    ax = fig.subplots()
-    sns.set_theme()
-    ax.bar(x=keys,height=values)
-    ax.set_xticklabels(keys)
-    ax.set_title('Song Features')
+    fig.update_layout(title="Song Analytics View",title_x=0.5,yaxis_title="Normalized Value",xaxis_title="Song Features (from Spotify)",font=dict(
+        family="Verdana, Sans-serif",
+        size=16))
 
-    plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right')
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)  
 
-    #Create a PNG image of the plot
-    img = BytesIO()
-    fig.savefig(img, format='png', bbox_inches="tight")
-
-    #Convert PNG to Byte String (Base64)
-    plot_url = base64.b64encode(img.getbuffer()).decode('utf8')
-
-
-    return render_template('song.html', lyrics=lyrics,song=song, genres=genres_complete, plot_url=plot_url)
+    return render_template('song.html', song=song, genres=genres_complete, graph=graphJSON)
 
 if __name__ == '__main__':
     app.run()
