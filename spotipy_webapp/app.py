@@ -1,15 +1,13 @@
 import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-from flask import Blueprint, render_template, current_app, request, Flask
-
+from flask import Blueprint, render_template, request, Flask
+from azapi import AZlyrics
 from sklearn import preprocessing
-
-import plotly
-import plotly.express as px
-
 import pandas as pd
 import json
+import plotly
+import plotly.express as px
 
 app= Flask(__name__)
 
@@ -48,6 +46,16 @@ def homepage():
     
     return render_template('homepage.html', foob=songs)
 
+@app.route('/about', methods=['GET'])
+
+def about():
+    return render_template('about.html')
+
+@app.route('/models', methods=['GET'])
+
+def models():
+    return render_template('models.html')
+
 @app.route('/song/<id>', methods=['GET'])
 
 def get_song(id):
@@ -57,30 +65,10 @@ def get_song(id):
     #Define spotif yvariables 
     song = sp.track(id)
     analysis = sp.audio_features(id)
-    features = []
 
-    df= pd.DataFrame()
+    df= pd.DataFrame(analysis[0],index=[0])
 
-    df['energy'] = ''*df.shape[0]
-    df['loudness'] = ''*df.shape[0]
-    df['speechiness'] = ''*df.shape[0]
-    df['valence'] = ''*df.shape[0]
-    df['liveness'] = ''*df.shape[0]
-    df['tempo'] = ''*df.shape[0]
-    df['danceability'] = ''*df.shape[0]
-    df['acousticness'] = ''*df.shape[0]
-    df['acousticness'] = ''*df.shape[0]
-
-    for i in range (0,df.shape[0]):    
-        df.loc[i,'energy'] = features[0]['energy']
-        df.loc[i,'speechiness'] = features[0]['speechiness']
-        df.loc[i,'liveness'] = features[0]['liveness']
-        df.loc[i,'loudness'] = features[0]['loudness']
-        df.loc[i,'danceability'] = features[0]['danceability']
-        df.loc[i,'tempo'] = features[0]['tempo']
-        df.loc[i,'valence'] = features[0]['valence']
-        df.loc[i,'acousticness'] = features[0]['acousticness']
-        df.loc[i,'instrumentalness'] = features[0]['instrumentalness']
+    df = df.loc[:,['danceability','energy','loudness',"speechiness",'acousticness','instrumentalness','liveness','valence','tempo']]
 
 
     #Create a list to iterate through artists
@@ -96,15 +84,14 @@ def get_song(id):
         genres_raw += art['genres']
 
     #Create a list without duplicates for the genre information to display
-    genres_complete=list(set(genres_raw))
-
+    genres_complete=set(genres_raw)
 
     #Create a df and plot for the page
     df2 = pd.read_csv('spotipy_webapp/data/genres_41k.csv')
 
     df2 = df2.drop(columns=["track","artist","uri","target","genres",'mode','key','time_signature','chorus_hit','duration_ms','sections'])
 
-    df2.append(df)
+    df2 = df2.append(df)
 
     scaler = preprocessing.MinMaxScaler()
 
@@ -112,15 +99,43 @@ def get_song(id):
 
     scaled_df = pd.DataFrame(scaled_data, columns=df2.columns)
 
-    fig = px.box(scaled_df,y=scaled_df.columns, points=False)
+    placement_col = ["Dataset" for x in range(0,len(scaled_df)-1)]
+
+    placement_col.append(song['name'])
+
+    scaled_df['placement'] = placement_col
+
+    fig = px.box(scaled_df,y=scaled_df.columns, points=False,color="placement")
 
     fig.update_layout(title="Song Analytics View",title_x=0.5,yaxis_title="Normalized Value",xaxis_title="Song Features (from Spotify)",font=dict(
         family="Verdana, Sans-serif",
-        size=16))
+        size=16,color="black"))
+
+    
 
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)  
 
-    return render_template('song.html', song=song, genres=genres_complete, graph=graphJSON)
+    return render_template('song.html', df=df, song=song, genres=genres_complete, graph=graphJSON)
+
+@app.route('/song/<id>/lyricanalysis', methods=['GET'])
+
+def lyrics_tab(id):
+
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+    #Define spotify variables 
+    track = sp.track(id)
+    id = track['id']
+    singer = track['artists'][0]['name']
+    track_name = track['name']
+
+    api = AZlyrics()
+
+    api.artist = singer
+    api.title= track_name
+    lyrics = api.getLyrics()
+
+    return render_template('wordreview.html',lyrics=lyrics,id=id)
 
 if __name__ == '__main__':
     app.run()
