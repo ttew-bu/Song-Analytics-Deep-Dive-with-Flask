@@ -8,12 +8,12 @@
             <button type="submit" class= "btn btn-primary">Search Spotify</button>
            </form>
     <table>
-    {% for foo in foob %}
+    {% for song in search_results %}
     <tr>
         <td>
-            <a href="{{ url_for('get_song', id=foo.id) }}"> {{foo.name}} </a>
+            <a href="{{ url_for('get_song', id=song.id) }}"> {{song.name}} </a>
         </td>
-        <td> <img src={{foo.cover}} style="height: min-content;"> </td>
+        <td> <img src={{song.cover}} style="height: min-content;"> </td>
     </tr>
     {% endfor %}
     </table>

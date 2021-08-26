@@ -4,11 +4,22 @@
 <center>
 <p>
 <h1>
-    Coming soon! <br>
+    <div id="lyrics">
+        Coming soon!
+    </div>
+    <br>
 
 <a href="{{ url_for('get_song', id=id) }}"> return to song </a>
 </h1>
 </p>
 </center>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/7.0.0/mark.min.js"></script>
+
+<script>
+    var markup_target = "Coming"
+    var instance = new Mark(document.querySelector("div"))
+    instance.mark(markup_target);
+</script>
 
 {% endblock %}
