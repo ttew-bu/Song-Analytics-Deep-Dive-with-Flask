@@ -8,6 +8,11 @@ import pandas as pd
 import json
 import plotly
 import plotly.express as px
+import pickle
+import re
+# import nltk
+# from nltk.stem import PorterStemmer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 #Define the application within Flask
 app= Flask(__name__)
@@ -142,7 +147,7 @@ def get_song(id):
     fig = px.box(scaled_df,y=scaled_df.columns, points=False,color="placement")
 
     #Add chart titles and formatting
-    fig.update_layout(title="Song Analytics View",title_x=0.5,yaxis_title="Normalized Value",xaxis_title="Song Features (from Spotify)",font=dict(
+    fig.update_layout(title="Song Analytics View",title_x=0.5,yaxis_title="Normalized Value",xaxis_title="Song Features (from Spotify)", font=dict(
         family="Verdana, Sans-serif",
         size=16,color="black"))
 
@@ -159,19 +164,35 @@ def lyrics_tab(id):
     '''Create the data to display the lyrics and instantiate the VADER sentiment analysis tool'''
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
+    model = pickle.load(open('spotipy_webapp/model_tools/genre_pred_model.pickle', 'rb'))
+    vect = pickle.load(open('spotipy_webapp/model_tools/vectorizer.pickle', 'rb'))
+
     #Define spotify variables 
     track = sp.track(id)
     id = track['id']
-    # singer = track['artists'][0]['name']
-    # track_name = track['name']
+    singer = track['artists'][0]['name']
+    track_name = track['name']
 
-    # api = AZlyrics()
+    #Instantiate the AZLyrics API
+    api = AZlyrics()
+    api.artist = singer
+    api.title= track_name
+    analysis_lyrics = api.getLyrics()
 
-    # api.artist = singer
-    # api.title= track_name
-    # lyrics = api.getLyrics()
+    #sub line breaks out via regex
+    processed_lyrics = re.sub(r"\n+", " ", analysis_lyrics)
+    
+    #sub all other punctuation out via regex
+    processed_lyrics = re.sub(r'[^\w\s]', '', processed_lyrics)
+    
+    #Convert all upper-case words to lower-case
+    processed_lyrics = [processed_lyrics.lower()]
+    vectorized_lyrics = vect.transform(processed_lyrics).toarray()
+    #predict
+    prediction = model.predict(vectorized_lyrics)
 
-    return render_template('wordreview.html',id=id)
+    
+    return render_template('wordreview.html',id=id,prediction=prediction,song=track_name)
 
 if __name__ == '__main__':
     app.run()

@@ -8,7 +8,10 @@
         Coming soon!
     </div>
     <br>
-
+    <div id='output'>
+        Based on the lyrics of the song and the current predictor model, <br>
+        {{song}}'s lyrics feel like a {{prediction[0]}} song.
+    </div>
 <a href="{{ url_for('get_song', id=id) }}"> return to song </a>
 </h1>
 </p>
