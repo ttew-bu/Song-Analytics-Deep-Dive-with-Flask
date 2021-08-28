@@ -17,6 +17,7 @@ plotly = "*"
 jinja2 = "*"
 sklearn = "*"
 azapi = "*"
+nltk = "*"
 
 [dev-packages]
 
