@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<center>
+<p>
+<h1>Sentiment Analysis of {{song}} by {{singer}}</h1>
+<h3><a href="{{ url_for('get_song', id=id) }}"> return to song page </a></h3>
+<div class='float-container'>
+    <div class='float-child', id="lyrics">
+        <center>
+            <h3>Lyrics:</h3>
+            These lyrics are sourced via the AZLyrics API (AZAPI) found <a href= "https://github.com/elmoiv/azapi">here.</a> <br>
+            Full credit for these lyrics goes to the AZ Lyrics team, click here to visit their <a href="https://azlyrics.com">page here.</a><br>
+            {% for chunk in lyrics %}
+                <br>{{chunk}}
+            {% endfor %}
+        </center>
+    </div>
+
+                <div class='float-child', id="info">
+                    <table>
+                    <tr><h2>VADER Sentiment Analysis Results<h2></tr>
+                    <tr>
+                        VADER classifies documents on compound scale of -1 (very negative) to 1 (very positive).<br>
+                        A higher "neg" or "pos" rating plays into the compound score and tells you the polarity of the words in the song.<br>
+                    </tr>
+                    <tr>
+                            Results
+                    </tr>
+                    {% for key,value in vader_score.items() %}
+                        <tr>
+                            <th>{{key}}:</th>
+                            <td> {{value}}</td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                    <table>
+                        <tr><h2>Predictive Model Genre Classifications</h2></tr>
+                        <tr>
+                            To see the effect of various components (lyrics, song features, and both) on song genre classification,<br>
+                            I built three models to classify a song. Given the list of genres Spotify tags this song with, this information<br>
+                            provides an interesting glance into how the song reads and feels. For more information, check out the models tab<br>
+                        </tr>
+                        <tr>
+                                Results
+                        </tr>
+                        <tr> 
+                            <th> Lyric Model: </th> <td>{{prediction}}</td>
+                        </tr>
+                        <tr>
+                            <th> Spotify Characteristic Model: </th> <td>coming soon</td>
+                        </tr>
+                        <tr>
+                            <th> Compound Model: </th> <td>coming soon</td>
+                        </tr>
+                    </table>
+                </div>
+</div>
+
+</p>
+</center>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/7.0.0/mark.min.js"></script>
+<script>
+    var markup_positive = {{positive_words |tojson}}
+    var markup_negative = {{negative_words |tojson}}
+    var instance = new Mark(document.querySelector("div"))
+    instance.mark(markup_positive, {
+    accuracy: "exactly",
+    separateWordSearch: false,
+})
+    instance.mark(markup_negative, {
+    className: 'secondary',
+    accuracy: "exactly",
+    separateWordSearch: false,
+});
+</script>
+
+{% endblock %}

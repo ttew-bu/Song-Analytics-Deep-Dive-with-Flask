@@ -5,16 +5,20 @@
     </head>
     <body>
         <header>
-            <a href="{{url_for('homepage')}}"> Search </a> | <a href="{{url_for('about')}}">About</a> | <a href="{{url_for('models')}}">Models</a>
+            <ul>
+            <li><a href="{{url_for('homepage')}}"> Search </a></li>
+            <li><a href="{{url_for('about')}}">About</a></li>
+            <li><a href="{{url_for('models')}}">Models</a></li>
+            </ul>
         </header>
 
 {% block content %}
 {% endblock %}
 
 <footer>
-    <center>All contents of this application are copyrighted by their respective owner and the intention of this application is to learn about music, not rip off others' works.<br>
-    So, please refrain from transforming and reproducing information from this application without going through the proper channels with the data providers.<br>
-    In the same spirit, if there is any issue with the data or presentation of this application, please reach out!
+    <center>All contents of this application are copyrighted by their respective owners and the intention of this application is transform these works so they fit under fair use for educational purposes.<br>
+    Please refrain from transforming or reproducing data from this application without going through the proper channels with the owners of that data<br>
+    If there is any issue with the data or presentation of the data within the application, please reach out!
     </center>
 </footer>
 
