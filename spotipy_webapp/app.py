@@ -11,7 +11,6 @@ import plotly.express as px
 import pickle
 import re
 import nltk
-nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.tokenize import word_tokenize
 
