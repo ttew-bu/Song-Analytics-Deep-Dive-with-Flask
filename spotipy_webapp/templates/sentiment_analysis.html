@@ -2,47 +2,72 @@
 {% block content %}
 
 <center>
-<p>
-<h1>Sentiment Analysis of {{song}} by {{singer}}</h1>
-<h3><a href="{{ url_for('get_song', id=id) }}"> return to song page </a></h3>
-<div class='float-container'>
-    <div class='float-child', id="lyrics">
+<h1>Sentiment analysis of {{song}} by {{singer}}</h1>
+<h3></h3>
+<div class='flex-container'>
+
+    <div class='flex-child-left'>
         <center>
             <h3>Lyrics:</h3>
-            These lyrics are sourced via the AZLyrics API (AZAPI) found <a href= "https://github.com/elmoiv/azapi">here.</a> <br>
+            <p style="font-weight: bolder;">These lyrics are sourced via the AZLyrics API (AZAPI) found <a href= "https://github.com/elmoiv/azapi">here.</a> <br>
             Full credit for these lyrics goes to the AZ Lyrics team, click here to visit their <a href="https://azlyrics.com">page here.</a><br>
+            </p>
+            <div id='lyrics'>
             {% for chunk in lyrics %}
                 <br>{{chunk}}
             {% endfor %}
+            </div>
         </center>
     </div>
-
-                <div class='float-child', id="info">
-                    <table>
-                    <tr><h2>VADER Sentiment Analysis Results<h2></tr>
-                    <tr>
+    <br>
+            <div class='flex-container-nested'>
+                <div class='flex-child-right', id="vader">
+                    
+                    <h2>VADER Sentiment Analysis Results</h2>
                         VADER classifies documents on compound scale of -1 (very negative) to 1 (very positive).<br>
                         A higher "neg" or "pos" rating plays into the compound score and tells you the polarity of the words in the song.<br>
-                    </tr>
-                    <tr>
-                            Results
-                    </tr>
+                            <h3>Results</h3>
+                    <table>
                     {% for key,value in vader_score.items() %}
                         <tr>
                             <th>{{key}}:</th>
                             <td> {{value}}</td>
                         </tr>
                     {% endfor %}
+                    <tr>
+                        <td>Toggle Positive Words</td>
+                        <td>Toggle Negative Words</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox", id='postoggle'>
+                                <div class="sliderpos"></div>
+                            </label>
+                        </td>
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox", id='negtoggle'>
+                                <div class="sliderneg"></div>
+                            </label>
+                        </td>
+                    </tr>
                     </table>
-                    <table>
-                        <tr><h2>Predictive Model Genre Classifications</h2></tr>
+
+                        </div>
+                        <br>
+                    <div class='flex-child-right', id="models">
+                        <table>
+                        <tr>
+                            <h2>Predictive Model Genre Classifications</h2>
+                        </tr>
                         <tr>
                             To see the effect of various components (lyrics, song features, and both) on song genre classification,<br>
                             I built three models to classify a song. Given the list of genres Spotify tags this song with, this information<br>
                             provides an interesting glance into how the song reads and feels. For more information, check out the models tab<br>
                         </tr>
                         <tr>
-                                Results
+                            <h3>Results</h3>
                         </tr>
                         <tr> 
                             <th> Lyric Model: </th> <td>{{prediction}}</td>
@@ -55,25 +80,65 @@
                         </tr>
                     </table>
                 </div>
-</div>
+                <br>
+                <div class ='flex-child-right', id='return'>
 
-</p>
+                    <h2><a href="{{ url_for('get_song', id=id) }}" class='btn-primary' style="font-size:28pt; color: white;"> Return to Song Page </a></h2>
+                </div>
+            </div>
+</div>
 </center>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/7.0.0/mark.min.js"></script>
 <script>
-    var markup_positive = {{positive_words |tojson}}
-    var markup_negative = {{negative_words |tojson}}
-    var instance = new Mark(document.querySelector("div"))
-    instance.mark(markup_positive, {
-    accuracy: "exactly",
-    separateWordSearch: false,
-})
-    instance.mark(markup_negative, {
-    className: 'secondary',
-    accuracy: "exactly",
-    separateWordSearch: false,
-});
+    function displayLyrics() {
+  var x = document.getElementById("lyrics");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var checkbox = document.getElementById('postoggle');
+  var instance = new Mark(document.querySelector("div"));
+  var markup_positive = {{positive_words |tojson}};
+
+  checkbox.addEventListener('change', function () {
+    if (checkbox.checked) {instance.mark(markup_positive, {
+    className: "pos",
+    accuracy: "exactly",
+    separateWordSearch: false,
+}) } else {instance.unmark(markup_positive, {
+    accuracy: "exactly",
+    separateWordSearch: false,
+}) }
+  });
+}); 
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var checkbox = document.getElementById('negtoggle');
+      var instance = new Mark(document.querySelector("div"));
+      var markup_negative = {{negative_words |tojson}};
+    
+      checkbox.addEventListener('change', function () {
+        if (checkbox.checked) {instance.mark(markup_negative, {
+        className: "neg",
+        accuracy: "exactly",
+        separateWordSearch: false,
+    }) } else {instance.unmark(markup_negative, {
+        accuracy: "exactly",
+        separateWordSearch: false,
+    }) }
+      });
+    }); 
+    
+    </script>
 
 {% endblock %}

@@ -3,19 +3,19 @@
         <Title> Spotipy Model Implementation </Title>
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='style/w3.css') }}">
     </head>
-    <body>
+    <body style='position:relative;'>
         <header>
             <ul>
-            <li><a href="{{url_for('homepage')}}"> Search </a></li>
-            <li><a href="{{url_for('about')}}">About</a></li>
-            <li><a href="{{url_for('models')}}">Models</a></li>
+            <li style="float:left"><a href="{{url_for('homepage')}}"> Search </a></li>
+            <li style="float:left"><a href="{{url_for('about')}}">About</a></li>
+            <li style="float:left"><a href="{{url_for('models')}}">Models</a></li>
             </ul>
         </header>
 
 {% block content %}
 {% endblock %}
 
-<footer>
+<footer style="position:absolute;bottom:0;width:100%;">
     <center>All contents of this application are copyrighted by their respective owners and the intention of this application is transform these works so they fit under fair use for educational purposes.<br>
     Please refrain from transforming or reproducing data from this application without going through the proper channels with the owners of that data<br>
     If there is any issue with the data or presentation of the data within the application, please reach out!

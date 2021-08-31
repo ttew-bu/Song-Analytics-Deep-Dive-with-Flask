@@ -50,7 +50,8 @@ def homepage():
             song_data = {
             'name': results['tracks']['items'][instance]['name'],
             'id': results['tracks']['items'][instance]['id'],
-            'cover': results['tracks']['items'][instance]['album']['images'][0]['url']
+            'cover': results['tracks']['items'][instance]['album']['images'][0]['url'],
+            'main artist': results['tracks']['items'][instance]['artists'][0]['name']
             }
 
             #Add each song to the dictionary
@@ -73,13 +74,14 @@ def models():
 
 @app.route('/song/<id>', methods=['GET'])
 
+
 def get_song(id):
     '''Return the HTML page for one search result and song character analysis'''
 
     ##FLOW FOR THE BASIC SONG INFORMATION##
     #Instantiate Spotify again
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-
+    
     #Define spotify variables 
     song = sp.track(id)
     analysis = sp.audio_features(id)
@@ -135,7 +137,7 @@ def get_song(id):
     scaled_df = pd.DataFrame(scaled_data, columns=df_chart.columns)
 
     #Create a column to differentiate the actual song from the dataset, which is the last index of the dataset
-    placement_col = ["Dataset" for x in range(0,len(scaled_df)-1)]
+    placement_col = ["Sample" for x in range(0,len(scaled_df)-1)]
 
     #Add the song name to the last object in the column so that the song name can be pulled
     placement_col.append(song['name'])
@@ -144,12 +146,12 @@ def get_song(id):
     scaled_df['placement'] = placement_col
 
     #Use plotly express to create a boxplot differentiating on the dataset v. the song in question
-    fig = px.box(scaled_df,y=scaled_df.columns, points=False,color="placement")
+    fig = px.box(scaled_df,y=scaled_df.columns, points=False,color="placement",color_discrete_map={song['name']: '#F4A896','Sample':'grey'})
 
     #Add chart titles and formatting
-    fig.update_layout(title="Song Analytics View",title_x=0.5,yaxis_title="Normalized Value",xaxis_title="Song Features (from Spotify)", font=dict(
-        family="Verdana, Sans-serif",
-        size=16,color="black"))
+    fig.update_layout(paper_bgcolor="#358597",plot_bgcolor='white',title="Song Analytics View",legend_title="Legend",title_x=0.5,yaxis_title="Normalized Value",xaxis_title="Song Features (from Spotify)", font=dict(
+        family="Georgia, Serif",
+        size=16,color="white"))
 
     
     #Convert the figure to json format so that it can be loaded in the html file
@@ -158,18 +160,19 @@ def get_song(id):
     #Return the template and create variables for the items to be displayed on the html page
     return render_template('song.html', df=df, song=song, genres=genres_complete, graph=graphJSON)
 
-@app.route('/song/<id>/lyricanalysis', methods=['GET'])
 
+@app.route('/song/<id>/lyricanalysis', methods=['GET'])
 def lyrics_tab(id):
     '''Create the data to display the lyrics and instantiate the VADER sentiment analysis tool'''
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-    #Define spotify variables 
-    track = sp.track(id)
-    id = track['id']
-    singer = track['artists'][0]['name']
-    track_name = track['name']
     try:
+        #Define spotify variables 
+        track = sp.track(id)
+        id = track['id']
+        singer = track['artists'][0]['name']
+        track_name = track['name']
+
         #Instantiate the AZLyrics API
         api = AZlyrics('duckduckgo')
         api.artist = singer
@@ -221,10 +224,20 @@ def lyrics_tab(id):
         prediction = model.predict(vectorized_lyrics)[0]
 
         return render_template('sentiment_analysis.html',id=id,prediction=prediction,song=track_name,singer=singer,lyrics=display_lyrics,positive_words=positive_words,negative_words=negative_words,vader_score=vader_score)
-    except TypeError:
-        #Build out error case
-        lyrics = "The application was unable to return lyrics for the track you requested, please try again later"
-        return render_template('sentiment_analysis.html',id=id,prediction=prediction,song=track_name,singer=singer,lyrics=display_lyrics,positive_words=positive_words,negative_words=negative_words,vader_score=vader_score)
 
+    except TypeError:
+        return render_template('error.html')
+#Build out error cases based on early tests so the app runs smoothly.
+@app.errorhandler(TypeError)
+def error():
+    '''serve up error page if type error'''
+
+    return render_template('error.html')
+
+@app.errorhandler(Exception)
+def error():
+    '''serve up error page if Exception'''
+
+    return render_template('error.html')
 if __name__ == '__main__':
     app.run()

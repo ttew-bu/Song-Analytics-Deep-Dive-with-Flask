@@ -1,13 +1,61 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<center>
-<p>
-<h1>
-    Coming soon! <br>
-
-</h1>
+<div class='about-blue'>
+<h2>
+    What is this thing?
+</h2>
+<p style='color:white;'>
+    Thank you for taking a moment to check out my song analysis web application!
+    This app is a passion project I came up with earlier in the summer to improve my skills.
+    I built a few data collection programs to build out a list of songs lyrics and characteristics for songs found in the Kaggle Spotify Hit Predictor Dataset.
+    One of the first features you can use is to look up your favorite songs and compare the song features to that of my 40,000 song sample.
+    Once you are on the song page, you can go to the lyric analysis tab, which has an interactive VADER sentiment analysis model
+    and houses a couple different machine learning models that classify the song's genre based on different features.
+    By looking at the song feature visualization and machine learning applications, I hope that you can learn something new about your favorite song!
 </p>
-</center>
+</div>
+<div class='about-pink'>
+<h2>
+    What futher improvements will you make to the app beyond this MVP version?
+</h2>
+<ol style="line-height:150%; color:white">
+    <li>
+        I will recollect the data to get even class balances for each of the 8 core genres and reupload updated models
+    </li>
+    <li>
+        I will take a look at alternatives to VADER and seeing if I can find an expanded or better fitting valence dictionary for lyrics
+    </li>
+    <li>
+        I will change the song data visualization to include toggle and data slicers (for example, compare your song to songs with a certain genre label in the sample)
+    </li>
 
+    <li>
+        I will look into ways to improve visualizations and page explanations based on feedback from application users. 
+    </li>
+</ol>
+</div>
+<div class='about-blue'>
+<h2>
+    Why did you implement machine learning models for genre classification and sentiment analysis?
+</h2>
+<p style='color:white;'>
+    In building this project, I wanted to learn how to pickle and deploy machine learning models so that I knew what putting a model into production was like.
+    In order to build the genre classifier dataset, I used a topic model to turn the raw genre output from Spotify into meaningful labels before doing the other models.
+    This process was not perfect, but it was an added challenge that helped me learn to work with unstructured text data.
+    I thought that building different genre classifier models and a sentiment analysis tool would be two different approaches to the data that could tell the user something new about the songs they love.
+    I believe the genre classifier can help the user better understand what genres element are present in different types of song data.
+    There are thousands of different genres today, but simplifying the labels down to 5-8 core genres and labelling song parts can better help us understand what how "Pop Rap" can differ from "Chicago Rap".
+    For the sentiment analyzer, I thought it would be helpful to help users understand the language in the song.
+    Music is incredibly emotional and Spotify provides a valence score for each song to cover happiness.
+    However, that measure often only captures the notes and keys of a song instead of the words.
+    So, I hope that sentiment analyzer can teach the user more about the emotional valence of their favorite song's lyrics.
+    With the Javascript toggle buttons on the page, the user can see which words were tagged by the model and also get an idea of how their song was scored.
+</p>
+</div>
+<div class='about-pink'>
+
+<h3>If you have any questions, you can reach out via Linkedin or can check out my GitHub to see the code under the hood.<br>
+Thanks again for checking out my app and I hope that you have fun using it! </h3>
+</div>
 {% endblock %}

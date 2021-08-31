@@ -1,56 +1,56 @@
 {% extends 'base.html' %}
 {% block content %}
-
-
+    <p>
     <center><h1>{{song['name']}}</h1></center>
+    <div class="flex-container-song">
+        <div class='flex-child-chart'>        
+            <div id='chart' style="width:1300;height:650;">
+            </div>
+        </div>
+        <div class='flex-container-nested-song'>
+            <div class='flex-song'>
+                <img src="{{song.album.images[0]['url']}}" style="width:400;height:400;">
+            </div>
+            <div class='flex-song'>
+                <h2>Artists</h2>
+                <table>
+                    {% for s in song.artists %}
+                    <tr>
+                        <td>{{s.name}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <h2>Genres</h2>
+                <table>
+                        {% if genres %}
+                        {% for genre in genres %}
+                    <tr>
+                        <td>{{genre}}</td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
 
-    <table>
-        <tr> 
-            <td>
-        <table>
-            <tr>
-                <td><img src="{{song.album.images[0]['url']}}" style="width:400;height:400;"></td>
-            </tr>
-    </table>
-        <table>
-            <h2>Artists</h2>
-            {% for s in song.artists %}
-            <tr>
-                <td>{{s.name}}</td>
-                <td></td>
-            </tr>
-            {% endfor %}
-        </table>
-
-        <h2>Genres</h2>
-        <table>
-            {% if genres %}
-            {% for genre in genres %}
-            <tr>
-                <td>{{genre}}</td>
-                <td></td>
-            </tr>
-            {% endfor %}
-
-            {% else %}
-            Spotify has no genre information for this song. <br>
-            Please try a different song or come back later! <br>
-            {% endif %}
+                    {% else %}
+                    Spotify has no genre information for this song. <br>
+                    Please try a different song or come back later! <br>
+                    {% endif %}
             
-        </table>
-        <a href="{{ url_for('lyrics_tab', id=song.id) }}"><h2>Go to Lyric Analysis</h2></a>
-        </td>
+                </table>
+            </div>
+            <br>
+            <center>
+            <div class='flex-child-right'></div>
+            <h2><a href="{{ url_for('lyrics_tab', id=song.id) }}" class='btn-primary'style="font-size:28pt; color: white;">Go to Lyric Analysis</a></h2>
+            </div>
+            </center>
+        </div>
+    </div>
+</p>
 
-        <td>
-            <div id="chart" style="width:1500;height:800;">
-        </td>
-        </tr>
-        </table>
     <script src="https://cdn.plot.ly/plotly-2.2.0.min.js"></script>
     <script type="text/javascript">
     var data = {{graph | safe}};
     Plotly.newPlot('chart', data,{});
     </script>
-    </body>
 
 {% endblock %}
