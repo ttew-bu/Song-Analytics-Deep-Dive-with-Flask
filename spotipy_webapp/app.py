@@ -2,7 +2,6 @@ import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from flask import render_template, request, Flask
-import azapi
 import lyricsgenius
 from sklearn import preprocessing
 import pandas as pd
@@ -179,10 +178,11 @@ def lyrics_tab(id):
     genius = lyricsgenius.Genius(access_token=genius_token)
 
     genius_results = genius.search_song(track_name,singer)
-        #If blank query, create a null and a continue running down the list
+    #If blank query, create a null and a continue running down the list
     if genius_results == None or genius_results == np.nan:
         lyrics = np.nan
 
+    # If it is anything but blank, check out the string
     else:
         result_artist = str(genius_results.primary_artist.name)
 
