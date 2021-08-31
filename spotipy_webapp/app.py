@@ -168,77 +168,80 @@ def lyrics_tab(id):
     '''Create the data to display the lyrics and instantiate the VADER sentiment analysis tool'''
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-    #Define spotify variables 
-    track = sp.track(id)
-    id = track['id']
-    singer = track['artists'][0]['name']
-    track_name = track['name']
+    try:
+        #Define spotify variables 
+        track = sp.track(id)
+        id = track['id']
+        singer = track['artists'][0]['name']
+        track_name = track['name']
 
-    #Use the Genius API 
-    genius = lyricsgenius.Genius(access_token=genius_token)
+        #Use the Genius API 
+        genius = lyricsgenius.Genius(access_token=genius_token)
 
-    genius_results = genius.search_song(track_name,singer)
-    #If blank query, create a null and a continue running down the list
-    if genius_results == None or genius_results == np.nan:
-        lyrics = np.nan
+        genius_results = genius.search_song(track_name,singer)
+        #If blank query, create a null and a continue running down the list
+        if genius_results == None or genius_results == np.nan:
+            lyrics = np.nan
 
-    # If it is anything but blank, check out the string
-    else:
-        result_artist = str(genius_results.primary_artist.name)
-
-        if result_artist in singer:
-            lyrics = genius_results.lyrics
+        # If it is anything but blank, check out the string
         else:
-            lyrics=np.nan
+            result_artist = str(genius_results.primary_artist.name)
 
-    #sub the bracket expressions via regex, these are commonly something like [(Shakira) Verse 1:] which are not lyrics
-    analysis_lyrics = re.sub(r"[\[].*?[\]]", "", lyrics)
+            if result_artist in singer:
+                lyrics = genius_results.lyrics
+            else:
+                lyrics=np.nan
 
-    analysis_lyrics = analysis_lyrics.replace("EmbedShare URLCopyEmbedCopy","")
+        #sub the bracket expressions via regex, these are commonly something like [(Shakira) Verse 1:] which are not lyrics
+        analysis_lyrics = re.sub(r"[\[].*?[\]]", "", lyrics)
 
-    #Add html elements to create lyrics to display
-    display_lyrics = analysis_lyrics.split('\n')
+        analysis_lyrics = analysis_lyrics.replace("EmbedShare URLCopyEmbedCopy","")
 
-    #Tokenize lyrics so they can be put into the VADER object
-    tokenized_lyrics = word_tokenize(analysis_lyrics)
+        #Add html elements to create lyrics to display
+        display_lyrics = analysis_lyrics.split('\n')
 
-    #Instantiate VADER for sentiment intensity analysis
-    sid = SentimentIntensityAnalyzer()
+        #Tokenize lyrics so they can be put into the VADER object
+        tokenized_lyrics = word_tokenize(analysis_lyrics)
 
-    #Create lists for positive words and negative words, which will be passed in to be highlighted
-    positive_words=[]
-    negative_words=[]
+        #Instantiate VADER for sentiment intensity analysis
+        sid = SentimentIntensityAnalyzer()
 
-    #Iterate over words in the song and see if they're positive or negative based on polarity score
-    for word in tokenized_lyrics:
-        if (sid.polarity_scores(word)['compound']) >= 0.05:
-            positive_words.append(word)
-        elif (sid.polarity_scores(word)['compound']) <= -0.05:
-            negative_words.append(word)
+        #Create lists for positive words and negative words, which will be passed in to be highlighted
+        positive_words=[]
+        negative_words=[]
 
-        #If it is not positive or negative, then ignore and continue working through the song
-        else:
-            continue
+        #Iterate over words in the song and see if they're positive or negative based on polarity score
+        for word in tokenized_lyrics:
+            if (sid.polarity_scores(word)['compound']) >= 0.05:
+                positive_words.append(word)
+            elif (sid.polarity_scores(word)['compound']) <= -0.05:
+                negative_words.append(word)
 
-    vader_score = sid.polarity_scores(analysis_lyrics)
+            #If it is not positive or negative, then ignore and continue working through the song
+            else:
+                continue
 
-    #load the model and vector from memory
-    model = pickle.load(open('spotipy_webapp/model_tools/genre_pred_model.pickle', 'rb'))
-    vect = pickle.load(open('spotipy_webapp/model_tools/vectorizer.pickle', 'rb'))
-    #sub line breaks out via regex
-    processed_lyrics = re.sub(r"\n+", " ", analysis_lyrics)
+        vader_score = sid.polarity_scores(analysis_lyrics)
 
-    #sub all other punctuation out via regex
-    processed_lyrics = re.sub(r'[^\w\s]', '', processed_lyrics)
+        #load the model and vector from memory
+        model = pickle.load(open('spotipy_webapp/model_tools/genre_pred_model.pickle', 'rb'))
+        vect = pickle.load(open('spotipy_webapp/model_tools/vectorizer.pickle', 'rb'))
+        #sub line breaks out via regex
+        processed_lyrics = re.sub(r"\n+", " ", analysis_lyrics)
 
-    #Convert all upper-case words to lower-case
-    processed_lyrics = [processed_lyrics.lower()]
-    vectorized_lyrics = vect.transform(processed_lyrics).toarray()
-    #predict
-    prediction = model.predict(vectorized_lyrics)[0]
+        #sub all other punctuation out via regex
+        processed_lyrics = re.sub(r'[^\w\s]', '', processed_lyrics)
 
-    return render_template('sentiment_analysis.html',id=id,prediction=prediction,song=track_name,singer=singer,lyrics=display_lyrics,positive_words=positive_words,negative_words=negative_words,vader_score=vader_score)
-        
+        #Convert all upper-case words to lower-case
+        processed_lyrics = [processed_lyrics.lower()]
+        vectorized_lyrics = vect.transform(processed_lyrics).toarray()
+        #predict
+        prediction = model.predict(vectorized_lyrics)[0]
+
+        return render_template('sentiment_analysis.html',id=id,prediction=prediction,song=track_name,singer=singer,lyrics=display_lyrics,positive_words=positive_words,negative_words=negative_words,vader_score=vader_score)
+    
+    except TypeError:
+        return render_template('error.html')
 #Build out error cases based on early tests so the app runs smoothly.
 @app.errorhandler(TypeError)
 def error():
