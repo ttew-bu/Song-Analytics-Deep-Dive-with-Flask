@@ -2,6 +2,7 @@ import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from flask import render_template, request, Flask
+import azapi
 from azapi import AZlyrics
 from sklearn import preprocessing
 import pandas as pd
@@ -174,7 +175,7 @@ def lyrics_tab(id):
         track_name = track['name']
 
         #Instantiate the AZLyrics API
-        api = AZlyrics('duckduckgo')
+        api = AZlyrics()
         api.artist = singer
         api.title= track_name
         analysis_lyrics = api.getLyrics()
@@ -227,6 +228,7 @@ def lyrics_tab(id):
 
     except TypeError:
         return render_template('error.html')
+        
 #Build out error cases based on early tests so the app runs smoothly.
 @app.errorhandler(TypeError)
 def error():
