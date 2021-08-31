@@ -3,7 +3,6 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from flask import render_template, request, Flask
 import azapi
-from azapi import AZlyrics
 from sklearn import preprocessing
 import pandas as pd
 import json
@@ -175,7 +174,7 @@ def lyrics_tab(id):
         track_name = track['name']
 
         #Instantiate the AZLyrics API
-        api = AZlyrics()
+        api = azapi.AZlyrics()
         api.artist = singer
         api.title= track_name
         analysis_lyrics = api.getLyrics()
