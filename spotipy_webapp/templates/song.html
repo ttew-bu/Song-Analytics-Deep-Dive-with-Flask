@@ -6,6 +6,13 @@
         <div class='flex-child-chart'>        
             <div id='chart' style="width:1300;height:650;">
             </div>
+            <br>
+            <div class='flex-chart-text'>
+                If you are unfamiliar with Spotify's song features, click <a href='https://developer.spotify.com/documentation/web-api/reference/#category-tracks'>here</a> and check out the documentation for "AudioFeaturesObject." 
+                Please note that these values were standardized to be in a range 0-1, so the numerical representations for items not already on that scale are different here. 
+                However, the relationships in the docs hold up and this visualization tells compares your song to the 40,000 song sample described in the about page. 
+                This visualization will tell you if your song exhibits abnormal levels of certain characteristics.
+            </div>
         </div>
         <div class='flex-container-nested-song'>
             <div class='flex-song'>
@@ -40,7 +47,7 @@
             <br>
             <center>
             <div class='flex-child-right'></div>
-            <h2><a href="{{ url_for('lyrics_tab', id=song.id) }}" class='btn-primary'style="font-size:28pt; color: white;">Go to Lyric Analysis</a></h2>
+            <h2><a href="{{ url_for('lyrics_tab', id=song.id) }}" class='btn-primary'>Go to Lyric Analysis</a></h2>
             </div>
             </center>
         </div>

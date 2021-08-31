@@ -1,13 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<center>
-<p>
-<h1>
-    Coming soon! <br>
-
-</h1>
-</p>
-</center>
-
+<div class='flex-container-aboutmodels'>
+<br>
+<div style="padding-top: 5%;"></div>
+<div class='about-blue'>
+<h2>
+    Models were used in the creation of this project and its dataset?
+</h2>
+<ol style="line-height:150%; color:white">
+    <li>
+        For the unsupervised portion of the pre-work, I used a Multicore Latent Diralecht Allocation (from Gensim) to generate the labels for the dataset based on the raw list of genres sent by Spotify. There should not be too much change to this model in future iterations. 
+    </li>
+    <br>
+    <li>
+        For the predictor models, I used a Linear Support Vectorizor Classification Model (LinearSVC from Sci-kit Learn) to process the vectorized model. The current model has about a 68% accuracy with 5 classes being identified. The intent is to re-run this model with balanced classes to increase accuracies with the intrduction of new classes. 
+    </li>
+    <br>
+    <li>
+        To do sentiment analysis, I used a Vanilla VADER Sentiment Intensity Analyzer on both the individual words for the polarity overlays and the whole song for the outputs
+    </li>
+    <br>
+    <li>
+        I also used a random forest, logistic regression, and knn when experimenting with the ideal model by tuning hyperparameters.
+    </li>
+</ol>
+</div>
+<br>
+<div class='about-pink'>
+<h3> If you would like to take a closer look at the model notebooks, take a look at my GitHub <a href="https://github.com/ttew-bu">here</a> under Spotipy_Models. </h3>
+</div>
+</div>
 {% endblock %}
