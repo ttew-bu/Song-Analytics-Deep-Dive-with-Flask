@@ -3,9 +3,11 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from flask import render_template, request, Flask
 import azapi
+import lyricsgenius
 from sklearn import preprocessing
 import pandas as pd
 import json
+import numpy as np
 import plotly
 import plotly.express as px
 import pickle
@@ -20,6 +22,7 @@ app= Flask(__name__)
 #define the client_id and client_secret for spotify API access
 client_id = os.environ.get('client_id')
 client_secret = os.environ.get('client_secret')
+genius_token = os.environ.get('genius_token')
 
 #Instantiate the credentials manager to make API calls
 client_credentials_manager = SpotifyClientCredentials(client_id,client_secret)
@@ -172,14 +175,26 @@ def lyrics_tab(id):
     singer = track['artists'][0]['name']
     track_name = track['name']
 
-    #Instantiate the AZLyrics API
-    api = azapi.AZlyrics()
-    api.artist = singer
-    api.title= track_name
-    analysis_lyrics = api.getLyrics()
+    #Use the Genius API 
+    genius = lyricsgenius.Genius(access_token=genius_token)
+
+    genius_results = genius.search_song(track_name,singer)
+        #If blank query, create a null and a continue running down the list
+    if genius_results == None or genius_results == np.nan:
+        lyrics = np.nan
+
+    else:
+        result_artist = str(genius_results.primary_artist.name)
+
+        if result_artist in singer:
+            lyrics = genius_results.lyrics
+        else:
+            lyrics=np.nan
 
     #sub the bracket expressions via regex, these are commonly something like [(Shakira) Verse 1:] which are not lyrics
-    analysis_lyrics = re.sub(r"[\[].*?[\]]", "", analysis_lyrics)
+    analysis_lyrics = re.sub(r"[\[].*?[\]]", "", lyrics)
+
+    analysis_lyrics = analysis_lyrics.replace("EmbedShare URLCopyEmbedCopy","")
 
     #Add html elements to create lyrics to display
     display_lyrics = analysis_lyrics.split('\n')
