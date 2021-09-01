@@ -14,30 +14,36 @@
             </p>
             <div id='lyrics'>
             {% for chunk in lyrics %}
-                <br>{{chunk}}
+                {{chunk}}<br>
             {% endfor %}
             </div>
         </center>
+        <br>
     </div>
     <br>
             <div class='flex-container-nested'>
                 <div class='flex-child-right', id="vader">
                     
                     <h2>VADER Sentiment Analysis Results</h2>
-                        VADER classifies documents on compound scale of -1 (very negative) to 1 (very positive).<br>
-                        A higher "neg" or "pos" rating plays into the compound score and tells you the polarity of the words in the song.<br>
-                            <h3>Results</h3>
-                    <table>
+                        <p style='align-content: center;'>VADER classifies documents on compound scale of -1 (very negative) to 1 (very positive).
+                        A higher "neg" or "pos" rating plays into the compound score and tells you the polarity of the words in the song. 
+                        For more information check out the documentation by clicking <a href='https://pypi.org/project/vaderSentiment/'>here</a>,</p>
+                            <h3>VADER Outputs</h3>
+                    <table style='padding-right: 12%;'>
                     {% for key,value in vader_score.items() %}
                         <tr>
                             <th>{{key}}:</th>
                             <td> {{value}}</td>
                         </tr>
                     {% endfor %}
+                    </table>
+                    <br>
+                    <table>
                     <tr>
                         <td>Toggle Positive Words</td>
                         <td>Toggle Negative Words</td>
                     </tr>
+                    
                     <tr>
                         <td>
                             <label class="switch">
@@ -62,12 +68,14 @@
                             <h2>Predictive Model Genre Classifications</h2>
                         </tr>
                         <tr>
-                            To see the effect of various components (lyrics, song features, and both) on song genre classification,<br>
-                            I built three models to classify a song. Given the list of genres Spotify tags this song with, this information<br>
-                            provides an interesting glance into how the song reads and feels. For more information, check out the models tab<br>
+                            To see the effect of various components (lyrics and song attributes) on song genre classification,
+                            I built two models to classify a song. Given the list of genres Spotify tags this song with, this information
+                            provides an interesting glance into how the song reads and feels. Many genres today are a combination of two larger genres
+                            and my hope is that this heuristic model gives you a feel for what "pop rap" really means in terms of characteristics and content. 
+                            For more information, check out the models tab.
                         </tr>
                         <tr>
-                            <h3>Results</h3>
+                            <h3>Classifier Model Outputs</h3>
                         </tr>
                         <tr> 
                             <th> Lyric Model: </th> <td>{{prediction}}</td>
@@ -75,14 +83,10 @@
                         <tr>
                             <th> Spotify Characteristic Model: </th> <td>coming soon</td>
                         </tr>
-                        <tr>
-                            <th> Compound Model: </th> <td>coming soon</td>
-                        </tr>
                     </table>
                 </div>
                 <br>
                 <div class ='flex-child-right', id='return'>
-
                     <h2><a href="{{ url_for('get_song', id=id) }}" class='btn-primary' style="font-size:28pt; color: white;"> Return to Song Page </a></h2>
                 </div>
             </div>

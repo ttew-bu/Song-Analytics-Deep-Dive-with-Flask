@@ -18,14 +18,14 @@ button,[type=button],[type=reset],[type=submit]{-webkit-appearance:button}
 button::-moz-focus-inner,[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner{border-style:none;padding:0}
 button:-moz-focusring,[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring{outline:1px dotted ButtonText}
 .flex-container-aboutmodels{display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;padding-bottom: 5%;}
-.flex-container{display: flex; flex-direction: row; align-items: baseline; justify-content: space-evenly;padding-left: 15%;padding-bottom: 5%;}
+.flex-container{display: flex; flex-direction: row; align-items: baseline; justify-content: space-evenly;padding-left: 15%;padding-bottom: 10%;}
 .flex-container-song{display: flex; flex-direction: row; align-items:flex-start; justify-content: space-evenly}
-.flex-container-nested{display: flex; flex-direction: column;justify-content: space-evenly;}
+.flex-container-nested{display: flex; flex-direction: column;align-items:center;}
 .flex-container-nested-song{display: flex; flex-direction: column;justify-content:space-between;padding-right: 2%;}
-.flex-child-chart{display: flex; width: 90%; flex-direction:column;padding-left: 2%;}
-.flex-chart-text{background-color:#F4A896;width:90%;text-align:center}
-.flex-child-left{display: flex; width: 35%; flex-direction: column;background-color:#F4A896}
-.flex-child-right{display: flex; width: 55%; flex-direction: column;background-color:#358597}
+.flex-child-chart{display: flex; flex-direction:column;padding-right:7%;padding-bottom:5%;align-items: center;}
+.flex-chart-text{background-color:#358597;width:80%;text-align:center;padding-top: 2%;padding-bottom: 1%;justify-content: center;align-items: center;}
+.flex-child-left{display: flex; width: 95%; flex-direction: column;background-color:#F4A896}
+.flex-child-right{display: flex; width: 35%; flex-direction: column;background-color:#358597}
 .flex-song{display: flex; flex-direction: column;background-color:#F4A896;}
 .flex-link{display: flex; flex-direction: column;background-color:#358597;}
 .search_bar{text-align: center;}

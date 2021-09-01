@@ -148,10 +148,10 @@ def get_song(id):
     scaled_df['placement'] = placement_col
 
     #Use plotly express to create a boxplot differentiating on the dataset v. the song in question
-    fig = px.box(scaled_df,y=scaled_df.columns, points=False,color="placement",color_discrete_map={song['name']: '#F4A896','Sample':'grey'})
+    fig = px.box(scaled_df,y=scaled_df.columns, points=False,color="placement",color_discrete_map={song['name']: '#358597','Sample':"#F4A896"},boxmode='overlay')
 
     #Add chart titles and formatting
-    fig.update_layout(paper_bgcolor="#358597",plot_bgcolor='white',title="Song Analytics View",legend_title="Legend",title_x=0.5,yaxis_title="Normalized Value",xaxis_title="Song Features (from Spotify)", font=dict(
+    fig.update_layout(paper_bgcolor="grey",plot_bgcolor='white',title="Spotify Attribute Visualization of Your Song and the Sample",legend_title="Legend",title_x=0.5,yaxis_title="Normalized Value",xaxis_title="Song Features (from Spotify)", font=dict(
         family="Georgia, Serif",
         size=16,color="white"))
 

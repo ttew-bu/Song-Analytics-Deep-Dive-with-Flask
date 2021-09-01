@@ -1,17 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
-    <p>
     <center><h1>{{song['name']}}</h1></center>
     <div class="flex-container-song">
         <div class='flex-child-chart'>        
-            <div id='chart' style="width:1300;height:650;">
+            <div id='chart' style="width:1250;height:500;">
             </div>
             <br>
             <div class='flex-chart-text'>
-                If you are unfamiliar with Spotify's song features, click <a href='https://developer.spotify.com/documentation/web-api/reference/#category-tracks'>here</a> and check out the documentation for "AudioFeaturesObject." 
-                Please note that these values were standardized to be in a range 0-1, so the numerical representations for items not already on that scale are different here. 
-                However, the relationships in the docs hold up and this visualization tells compares your song to the 40,000 song sample described in the about page. 
-                This visualization will tell you if your song exhibits abnormal levels of certain characteristics.
+                <h3>What does this chart say?</h3>
+                <p>
+                    This chart compares your favorite song to the 40,000 song sample used to train some of the models. 
+                    The songs spanned 50 years and all genres, so this addresses how this song compares to all songs. 
+                    Future updates to this project could include slicers that will help you compare your song to those with specific genres or attributes. 
+                    All values are normalized and scaled 0-1 so this visualization came across cleanly. 
+                    The boxplot for the sample highlights the 25th and 75th percentiles on top of the mean. 
+                    The whiskers go up to the top of the sample to highlight the size of the top and bottom quarters of that attribute.
+                    The blue overlay is your favorite song's attribute in that category.
+                    
+                    <h3>Some questions for you to ask include: </h3>
+                    <h5>Does my song fall outside the average in our sample?</h5>
+                    <h5>I think this song is really loud, but is it really loud compared to the sample?</h5>
+                    <h5>What is unique about my favorite song?</h5>
+                    <h4 style="color: white;">If you are unfamiliar with Spotify's song features, 
+                        click <a href='https://developer.spotify.com/documentation/web-api/reference/#category-tracks'>here</a> 
+                        and check out the documentation for "AudioFeaturesObject." </h4>
+                </p>
             </div>
         </div>
         <div class='flex-container-nested-song'>
@@ -46,13 +59,12 @@
             </div>
             <br>
             <center>
-            <div class='flex-child-right'></div>
-            <h2><a href="{{ url_for('lyrics_tab', id=song.id) }}" class='btn-primary'>Go to Lyric Analysis</a></h2>
+            <div class='flex-song'></div>
+            <h2><a href="{{ url_for('lyrics_tab', id=song.id) }}" class='btn-primary' style="font-size:28pt; color: white;">Go to Lyric Analysis</a></h2>
             </div>
             </center>
         </div>
     </div>
-</p>
 
     <script src="https://cdn.plot.ly/plotly-2.2.0.min.js"></script>
     <script type="text/javascript">
