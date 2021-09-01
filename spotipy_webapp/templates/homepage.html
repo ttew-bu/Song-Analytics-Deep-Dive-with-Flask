@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class='search_bar'>
+    <div class='search_bar'style='padding-left:5%'>
+        <center>
         <h1>Search For a Song</h1>
            <form method="POST">
                <input type="text" name="query" class="form-control">
@@ -8,6 +9,11 @@
            </form>
     </div>
     <div class='search_results'>
+        {% if search_results %}
+        <center>
+            <h3>Search Results:</h3>
+        </center>
+        {% endif %}
     <table>
     {% for song in search_results %}
     <tr style="background-color:#F4A896">
@@ -24,6 +30,7 @@
     </tr>
     {% endfor %}
     </table>
+    </center>
     </div>
 
 
