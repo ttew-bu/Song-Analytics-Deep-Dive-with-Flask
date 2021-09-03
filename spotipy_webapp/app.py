@@ -256,8 +256,10 @@ def lyrics_tab(id):
         attrib_model = pickle.load(open('spotipy_webapp/model_tools/genre_pred_model_attrib.pickle', 'rb'))
         scaler = pickle.load(open('spotipy_webapp/model_tools/scaler.pickle', 'rb'))
 
+        df_scaled = scaler.transform(df)
+
         #Pull the the pickled model and run a prediction, store it in a variable
-        attrib_pred = attrib_model.predict(df)[0]
+        attrib_pred = attrib_model.predict(df_scaled)[0]
 
         return render_template('sentiment_analysis.html',id=id,prediction=prediction,song=track_name,singer=singer,lyrics=display_lyrics,positive_words=positive_words,
         negative_words=negative_words,vader_score=vader_score,attrib_pred=attrib_pred)
