@@ -235,12 +235,32 @@ def lyrics_tab(id):
         #Convert all upper-case words to lower-case
         processed_lyrics = [processed_lyrics.lower()]
         vectorized_lyrics = vect.transform(processed_lyrics).toarray()
+
         #predict
         prediction = model.predict(vectorized_lyrics)[0]
 
         ##GENRE CLASSIFIER VIA ATTRIBUTE SECTION##
+        #Instantiate Spotify again
+        sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+        
+        #Define spotify variables via audio features
+        analysis = sp.audio_features(id)
 
-        return render_template('sentiment_analysis.html',id=id,prediction=prediction,song=track_name,singer=singer,lyrics=display_lyrics,positive_words=positive_words,negative_words=negative_words,vader_score=vader_score)
+        #Create a dataframe from the song features so it can be highlighted on the page
+        df= pd.DataFrame(analysis[0],index=[0])
+
+        #Drop the columns that need to be dropped
+        df= df.drop(columns=["uri","track_href","key","time_signature","analysis_url","type","id"],axis=1)
+
+        #Pull the pickled scaler up so the data can be scaled based on the train set
+        attrib_model = pickle.load(open('spotipy_webapp/model_tools/genre_pred_model_attrib.pickle', 'rb'))
+        scaler = pickle.load(open('spotipy_webapp/model_tools/scaler.pickle', 'rb'))
+
+        #Pull the the pickled model and run a prediction, store it in a variable
+        attrib_pred = attrib_model.predict(df)[0]
+
+        return render_template('sentiment_analysis.html',id=id,prediction=prediction,song=track_name,singer=singer,lyrics=display_lyrics,positive_words=positive_words,
+        negative_words=negative_words,vader_score=vader_score,attrib_pred=attrib_pred)
     
     except TypeError:
         return render_template('error.html')
