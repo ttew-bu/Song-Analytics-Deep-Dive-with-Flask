@@ -238,6 +238,8 @@ def lyrics_tab(id):
         #predict
         prediction = model.predict(vectorized_lyrics)[0]
 
+        ##GENRE CLASSIFIER VIA ATTRIBUTE SECTION##
+
         return render_template('sentiment_analysis.html',id=id,prediction=prediction,song=track_name,singer=singer,lyrics=display_lyrics,positive_words=positive_words,negative_words=negative_words,vader_score=vader_score)
     
     except TypeError:
