@@ -95,12 +95,15 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/7.0.0/mark.min.js"></script>
 
+
 <script>
+    ///credit for this script goes to the markjs notation and https://stackoverflow.com/questions/44565816/javascript-toggle-switch-using-data
 document.addEventListener('DOMContentLoaded', function () {
   var checkbox = document.getElementById('postoggle');
   var instance = new Mark(document.querySelector("div"));
   var markup_positive = {{positive_words |tojson}};
 
+///This checkbox event listener looks for changes in the toggle button; when changed from original state, highlight positive words green
   checkbox.addEventListener('change', function () {
     if (checkbox.checked) {instance.mark(markup_positive, {
     className: "pos",
@@ -120,7 +123,8 @@ document.addEventListener('DOMContentLoaded', function () {
       var checkbox = document.getElementById('negtoggle');
       var instance = new Mark(document.querySelector("div"));
       var markup_negative = {{negative_words |tojson}};
-    
+
+      ///This checkbox event listener looks for changes in the toggle button; when changed from original state, highlight negative words red
       checkbox.addEventListener('change', function () {
         if (checkbox.checked) {instance.mark(markup_negative, {
         className: "neg",
