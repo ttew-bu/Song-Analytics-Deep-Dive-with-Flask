@@ -84,6 +84,17 @@
                             <th> Spotify Characteristic Model: </th> <td>{{attrib_pred}}</td>
                         </tr>
                     </table>
+                    <table>
+                        <tr>
+                            <h2>Actual Genres</h2>
+                        </tr>
+                        {% for item in genres %}
+                        <tr style='font-weight: bold;'>
+                           <td>{{item}}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </table>
                 </div>
                 <br>
                 <div class ='flex-child-right', id='return'>

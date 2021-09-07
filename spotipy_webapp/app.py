@@ -95,31 +95,6 @@ def get_song(id):
     #Select only the relevant columns from the dataframe and redefine the variable df
     df = df.loc[:,['danceability','energy','loudness',"speechiness",'acousticness','instrumentalness','liveness','valence','tempo']]
 
-    #Create a list to iterate through artists and gather their information
-    artist_ids = []
-    
-    #For artist credited on the song, keep the song ID
-    for artist in song['artists']:
-
-        #add artist ids to the list
-        artist_ids.append(artist['id'])
-
-    #Create a variable to store each of the genres associated with an artist
-    genres_raw = []
-
-    #Iterate through each artist id in the list to get the genres associated with the song
-    for identifier in artist_ids:
-        
-        #create an object for the artist based on the ID
-        art = sp.artist(identifier)
-
-        #add the genres to the raw genres list
-        genres_raw += art['genres']
-
-    #Create a list without duplicates for the genre information to display
-    genres_complete=set(genres_raw)
-
-
     ##FLOW FOR CREATING THE ANALYSIS CHART##
     #Create a df and plot for the page based on the adapted billboard dataset
     df_chart = pd.read_csv('spotipy_webapp/data/genres_41k.csv')
@@ -161,7 +136,7 @@ def get_song(id):
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)  
 
     #Return the template and create variables for the items to be displayed on the html page
-    return render_template('song.html', df=df, song=song, genres=genres_complete, graph=graphJSON)
+    return render_template('song.html', df=df, song=song, graph=graphJSON)
 
 
 @app.route('/song/<id>/lyricanalysis', methods=['GET'])
@@ -175,6 +150,30 @@ def lyrics_tab(id):
         id = track['id']
         singer = track['artists'][0]['name']
         track_name = track['name']
+
+
+        #Get track genres
+
+        #First step is to get artists to query
+        artist_ids = []
+        for artist in track['artists']:
+            artist_id = artist['id']
+            artist_ids.append(artist_id)
+
+        #Create a variable to store each of the genres associated with an artist
+        genres_raw = []
+
+        #Iterate through each artist id in the list to get the genres associated with the song
+        for identifier in artist_ids:
+            
+            #create an object for the artist based on the ID
+            art = sp.artist(identifier)
+
+            #add the genres to the raw genres list
+            genres_raw += art['genres']
+
+        #Create a list without duplicates for the genre information to display
+        genres_complete=set(genres_raw)
 
         #Use the Genius API 
         genius = lyricsgenius.Genius(access_token=genius_token)
@@ -264,7 +263,7 @@ def lyrics_tab(id):
         attrib_pred = attrib_model.predict(df_scaled)[0]
 
         return render_template('sentiment_analysis.html',id=id,prediction=prediction,song=track_name,singer=singer,lyrics=display_lyrics,positive_words=positive_words,
-        negative_words=negative_words,vader_score=vader_score,attrib_pred=attrib_pred)
+        negative_words=negative_words,vader_score=vader_score,attrib_pred=attrib_pred,genres=genres_complete)
     
     except TypeError:
         return render_template('error.html')
