@@ -27,7 +27,10 @@
                     <h2>VADER Sentiment Analysis Results</h2>
                         <p style='align-content: center;'>VADER classifies documents on compound scale of -1 (very negative) to 1 (very positive).
                         A higher "neg" or "pos" rating plays into the compound score and tells you the polarity of the words in the song. 
-                        For more information check out the documentation by clicking <a href='https://pypi.org/project/vaderSentiment/'>here</a>,</p>
+                        For more information check out the documentation by clicking <a href='https://pypi.org/project/vaderSentiment/'>here</a>
+                    I also think an important part of this visualization is highlighting roughly how VADER is not perfect and not all terminology is picked up.
+                    Some words are not in the VADER corpus (or not charged the way you may think) and this also highlights the importance of recognizing potential biases or
+                    limitations in our methods as data scientists.</p>
                             <h3>VADER Outputs</h3>
                     <table style='padding-right: 12%;'>
                     {% for key,value in vader_score.items() %}
