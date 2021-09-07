@@ -4,34 +4,48 @@
         <center>
         <h1>Search For a Song</h1>
            <form method="POST">
-               <input type="text" name="query" class="form-control">
+               <!--Required attribute prevents error from blank or null queries-->
+               <input type="text" name="query" id='query' class="form-control" required>
             <button type="submit" class= "button1">Search Spotify</button>
            </form>
     </div>
+    {% if search_results %}
+    <br>
     <div class='search_results'>
-        {% if search_results %}
         <center>
             <h3>Search Results:</h3>
         </center>
-        {% endif %}
     <table>
     {% for song in search_results %}
-    <tr style="background-color:#F4A896">
-        <td> <img src={{song.cover}} style="height: 600px;"> </td>
-        <td style="font-size: 28pt; color: white; width: 500;">
-            <a href="{{ url_for('get_song', id=song.id) }}">
+    <tr style="background-color:grey">
+        <td> <img src={{song.cover}}> </td>
+        <td style="font-size: 28pt; color: white">
+            <center>
              {{song.name}}
             <br>
             by
             <br>
             {{song['main artist']}}
-        </a>
+            <br>
+            <br>
+            <br>
+            <a href="{{ url_for('get_song', id=song.id) }}">
+            <div class='btn-primary' style='width: 50%;height: 20%;'>
+                Go to Song Visualization Tab
+            </div>
+            </a>
+            <br>
+            <a href="{{ url_for('lyrics_tab', id=song.id) }}">
+            <div class='btn-secondary' style='width: 50%;height: 20%;'>
+                Go to Text and Genre Analysis
+            </div>
+            </a>
+        </center>
         </td>
     </tr>
     {% endfor %}
     </table>
     </center>
     </div>
-
-
+    {% endif %}
 {% endblock %}

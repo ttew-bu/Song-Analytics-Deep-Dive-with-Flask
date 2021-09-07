@@ -1,12 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-    <center><h1>{{song['name']}}</h1></center>
+    <center><h1>{{song['name']}} by {{song['artists'][0]['name']}}</h1></center>
     <div class="flex-container-song">
         <div class='flex-child-chart'>        
             <div id='chart' style="width:1250;height:500;">
             </div>
             <br>
+            <br>
+            <br>
+            <center>
+                <div class='flex-song'>
+                <h2><a href="{{ url_for('lyrics_tab', id=song.id) }}" style="font-size:28pt; color: white;">Go to Lyric Analysis</a></h2>
+                </div>
+            </center>
+        </div>
+        <div class='flex-container-nested-song'>
             <div class='flex-chart-text'>
+                <center>
                 <h3>What does this chart say?</h3>
                 <p>
                     This chart compares your favorite song to the 40,000 song sample used to train some of the models. 
@@ -18,51 +28,17 @@
                     The blue overlay is your favorite song's attribute in that category.
                     
                     <h3>Some questions for you to ask include: </h3>
-                    <h5>Does my song fall outside the average in our sample?</h5>
+                    <h5>Does my song fall outside a certain range for an attribute compared to the sample?</h5>
                     <h5>I think this song is really loud, but is it really loud compared to the sample?</h5>
-                    <h5>What is unique about my favorite song?</h5>
+                    <h5>What is unique about my favorite song from a song characteristic perspective?</h5>
                     <h4 style="color: white;">If you are unfamiliar with Spotify's song features, 
                         click <a href='https://developer.spotify.com/documentation/web-api/reference/#category-tracks'>here</a> 
                         and check out the documentation for "AudioFeaturesObject." </h4>
                 </p>
+            </center>
             </div>
-        </div>
-        <div class='flex-container-nested-song'>
-            <div class='flex-song'>
-                <img src="{{song.album.images[0]['url']}}" style="width:400;height:400;">
-            </div>
-            <div class='flex-song'>
-                <h2>Artists</h2>
-                <table>
-                    {% for s in song.artists %}
-                    <tr>
-                        <td>{{s.name}}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-                <h2>Genres</h2>
-                <table>
-                        {% if genres %}
-                        {% for genre in genres %}
-                    <tr>
-                        <td>{{genre}}</td>
-                        <td></td>
-                    </tr>
-                    {% endfor %}
-
-                    {% else %}
-                    Spotify has no genre information for this song. <br>
-                    Please try a different song or come back later! <br>
-                    {% endif %}
-            
-                </table>
             </div>
             <br>
-            <center>
-            <div class='flex-song'></div>
-            <h2><a href="{{ url_for('lyrics_tab', id=song.id) }}" class='btn-primary' style="font-size:28pt; color: white;">Go to Lyric Analysis</a></h2>
-            </div>
-            </center>
         </div>
     </div>
 

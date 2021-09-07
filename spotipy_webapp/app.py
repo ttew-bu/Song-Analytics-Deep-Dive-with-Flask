@@ -1,4 +1,5 @@
 import os
+from typing import final
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from flask import render_template, request, Flask
@@ -195,6 +196,7 @@ def lyrics_tab(id):
         #sub the bracket expressions via regex, these are commonly something like [(Shakira) Verse 1:] which are not lyrics
         analysis_lyrics = re.sub(r"[\[].*?[\]]", "", lyrics)
 
+        #Remove the non-lyric text from the back end
         analysis_lyrics = analysis_lyrics.replace("EmbedShare URLCopyEmbedCopy","")
 
         #Add html elements to create lyrics to display
@@ -204,7 +206,7 @@ def lyrics_tab(id):
         tokenized_lyrics = word_tokenize(analysis_lyrics)
 
         #Instantiate VADER for sentiment intensity analysis
-        sid = SentimentIntensityAnalyzer()
+        sia = SentimentIntensityAnalyzer()
 
         #Create lists for positive words and negative words, which will be passed in to be highlighted
         positive_words=[]
@@ -212,16 +214,16 @@ def lyrics_tab(id):
 
         #Iterate over words in the song and see if they're positive or negative based on polarity score
         for word in tokenized_lyrics:
-            if (sid.polarity_scores(word)['compound']) >= 0.05:
+            if (sia.polarity_scores(word)['compound']) >= 0.05:
                 positive_words.append(word)
-            elif (sid.polarity_scores(word)['compound']) <= -0.05:
+            elif (sia.polarity_scores(word)['compound']) <= -0.05:
                 negative_words.append(word)
 
             #If it is not positive or negative, then ignore and continue working through the song
             else:
                 continue
 
-        vader_score = sid.polarity_scores(analysis_lyrics)
+        vader_score = sia.polarity_scores(analysis_lyrics)
 
         #load the model and vector from memory
         model = pickle.load(open('spotipy_webapp/model_tools/genre_pred_model.pickle', 'rb'))
