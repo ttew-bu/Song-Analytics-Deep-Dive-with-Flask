@@ -91,11 +91,18 @@
                         <tr>
                             <h2>Actual Genres</h2>
                         </tr>
-                        {% for item in genres %}
-                        <tr style='font-weight: bold;'>
-                           <td>{{item}}</td>
-                        </tr>
-                        {% endfor %}
+                    {% if genres %}
+                    {% for genre in genres %}
+                    <tr>
+                        <td>{{genre}}</td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+
+                    {% else %}
+                    Spotify has no genre information for this song. <br>
+                    Please try a different song or come back later! <br>
+                    {% endif %}
 
                     </table>
                 </div>
