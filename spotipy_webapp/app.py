@@ -240,7 +240,7 @@ def lyrics_tab(id):
         print(vectorized_lyrics.shape)
         
         #predict
-        prediction = model.predict(vectorized_lyrics)
+        prediction = model.predict(vectorized_lyrics)[0]
 
         ##GENRE CLASSIFIER VIA ATTRIBUTE SECTION##
         #Instantiate Spotify again
