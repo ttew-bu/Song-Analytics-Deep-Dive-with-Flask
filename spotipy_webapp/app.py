@@ -2,7 +2,7 @@ import os
 from typing import final
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-from flask import render_template, request, Flask
+from flask import render_template, request, Flask, send_from_directory
 import lyricsgenius
 from sklearn import preprocessing
 import pandas as pd
@@ -16,6 +16,14 @@ import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.tokenize import word_tokenize
 
+from dotenv import load_dotenv
+load_dotenv()
+
+#on server restart, grab these resources
+nltk.download('punkt')
+nltk.download('vader_lexicon')
+nltk.download('stopwords')
+
 #Define the application within Flask
 app= Flask(__name__)
 
@@ -27,10 +35,13 @@ genius_token = os.environ.get('genius_token')
 #Instantiate the credentials manager to make API calls
 client_credentials_manager = SpotifyClientCredentials(client_id,client_secret)
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 #Define the processes that occur on the landing page
 @app.route('/', methods=['GET', 'POST'])
-
-
 def homepage():
     '''This function governs the actions that occur on the home/search page for the app including Spotify calls and data attribute collection'''
 
@@ -76,8 +87,6 @@ def models():
     return render_template('models.html')
 
 @app.route('/song/<id>', methods=['GET'])
-
-
 def get_song(id):
     '''Return the HTML page for one search result and song character analysis'''
 
@@ -97,7 +106,7 @@ def get_song(id):
 
     ##FLOW FOR CREATING THE ANALYSIS CHART##
     #Create a df and plot for the page based on the adapted billboard dataset
-    df_chart = pd.read_csv('spotipy_webapp/data/genres_41k.csv')
+    df_chart = pd.read_csv('data/genres_41k.csv')
 
     #drop the irrelevant columns from the chart so it can be used in visualization
     df_chart = df_chart.drop(columns=["track","artist","uri","target","genres",'mode','key','time_signature','chorus_hit','duration_ms','sections'])
@@ -201,6 +210,9 @@ def lyrics_tab(id):
         #Add html elements to create lyrics to display
         display_lyrics = analysis_lyrics.split('\n')
 
+        with open('out.txt', 'w') as output:
+            output.write(analysis_lyrics)
+
         #Tokenize lyrics so they can be put into the VADER object
         tokenized_lyrics = word_tokenize(analysis_lyrics)
 
@@ -225,8 +237,8 @@ def lyrics_tab(id):
         vader_score = sia.polarity_scores(analysis_lyrics)
 
         #load the model and vector from memory
-        model = pickle.load(open('spotipy_webapp/model_tools/genre_pred_model.pickle', 'rb'))
-        vect = pickle.load(open('spotipy_webapp/model_tools/vectorizer.pickle', 'rb'))
+        model = pickle.load(open('model_tools/genre_pred_model.pickle', 'rb'))
+        vect = pickle.load(open('model_tools/vectorizer.pickle', 'rb'))
         #sub line breaks out via regex
         processed_lyrics = re.sub(r"\n+", " ", analysis_lyrics)
 
@@ -256,8 +268,8 @@ def lyrics_tab(id):
         df= df.drop(columns=["uri","track_href","key","time_signature","analysis_url","type","id"],axis=1)
 
         #Pull the pickled scaler up so the data can be scaled based on the train set
-        attrib_model = pickle.load(open('spotipy_webapp/model_tools/genre_pred_model_attrib.pickle', 'rb'))
-        scaler = pickle.load(open('spotipy_webapp/model_tools/scaler.pickle', 'rb'))
+        attrib_model = pickle.load(open('model_tools/genre_pred_model_attrib.pickle', 'rb'))
+        scaler = pickle.load(open('model_tools/scaler.pickle', 'rb'))
 
         df_scaled = scaler.transform(df)
 
