@@ -106,7 +106,7 @@ def get_song(id):
 
     ##FLOW FOR CREATING THE ANALYSIS CHART##
     #Create a df and plot for the page based on the adapted billboard dataset
-    df_chart = pd.read_csv('data/genres_41k.csv')
+    df_chart = pd.read_csv('spotipy_webapp/data/genres_41k.csv')
 
     #drop the irrelevant columns from the chart so it can be used in visualization
     df_chart = df_chart.drop(columns=["track","artist","uri","target","genres",'mode','key','time_signature','chorus_hit','duration_ms','sections'])
@@ -237,8 +237,8 @@ def lyrics_tab(id):
         vader_score = sia.polarity_scores(analysis_lyrics)
 
         #load the model and vector from memory
-        model = pickle.load(open('model_tools/genre_pred_model.pickle', 'rb'))
-        vect = pickle.load(open('model_tools/vectorizer.pickle', 'rb'))
+        model = pickle.load(open('spotipy_webapp/model_tools/genre_pred_model.pickle', 'rb'))
+        vect = pickle.load(open('spotipy_webapp/model_tools/vectorizer.pickle', 'rb'))
         #sub line breaks out via regex
         processed_lyrics = re.sub(r"\n+", " ", analysis_lyrics)
 
@@ -268,8 +268,8 @@ def lyrics_tab(id):
         df= df.drop(columns=["uri","track_href","key","time_signature","analysis_url","type","id"],axis=1)
 
         #Pull the pickled scaler up so the data can be scaled based on the train set
-        attrib_model = pickle.load(open('model_tools/genre_pred_model_attrib.pickle', 'rb'))
-        scaler = pickle.load(open('model_tools/scaler.pickle', 'rb'))
+        attrib_model = pickle.load(open('spotipy_webapp/model_tools/genre_pred_model_attrib.pickle', 'rb'))
+        scaler = pickle.load(open('spotipy_webapp/model_tools/scaler.pickle', 'rb'))
 
         df_scaled = scaler.transform(df)
 
