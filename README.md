@@ -10,4 +10,4 @@ The other analysis page will run a sentiment analysis of the lyrics and try to p
 
 Any feedback on methodologies or features would be appreciated!
 
-Check out my current launch here: https://cryptic-escarpment-16928.herokuapp.com/
+Check out my current launch here: https://spotipy-analytics-872828c61908.herokuapp.com/
